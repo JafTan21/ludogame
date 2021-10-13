@@ -10,11 +10,13 @@ export default function useSocket() {
 
     useEffect(() => {
         socket = io(socketEndpoint)
-
         return () => {
             socket.off()
         }
     }, [])
+
+    useEffect(() => {
+    }, [socket])
 
 
     return [socket]

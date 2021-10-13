@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 
-export default function useUpdateLogger(value) {
+export default function useUpdateLogger(value, cb = null) {
     useEffect(() => {
-        console.log(value)
+        if (cb) console.log(value ? cb(value) : null)
+        else console.log(value)
     }, [value])
 }

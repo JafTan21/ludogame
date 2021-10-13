@@ -10,7 +10,7 @@ export default function CreateRoom() {
     const [createdRoom, setCreatedRoom] = useState('')
     const create_room = () => {
         socket.emit('create_room', {
-            room: Math.floor((Math.random() * 999999) + 100000)
+            room: 'r' + Math.floor((Math.random() * 999999) + 100000)
         });
 
         socket.on('send_created_room', ({ room }) => {

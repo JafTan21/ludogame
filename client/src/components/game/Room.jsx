@@ -5,6 +5,7 @@ import useQueryString from '../../hooks/useQueryString'
 import useRequireAuth from '../../hooks/useRequireAuth'
 import useSocket from '../../hooks/useSocket'
 import { useBeforeunload } from 'react-beforeunload';
+import { Redirect } from 'react-router'
 
 export default function Room() {
 
@@ -15,8 +16,8 @@ export default function Room() {
     const [queryString] = useQueryString()
     const [user] = useLocalStorage('user', '')
     const [auth] = useIsAuthenticated();
-    const [players, setPlayers] = useState([])
-
+    const [players, setPlayers] = useLocalStorage('players', [], true)
+    const [gameStarted, setGameStarted] = useState(false)
 
     useEffect(() => {
         if (!queryString || !auth) return;
@@ -34,14 +35,14 @@ export default function Room() {
             }
         });
         socket.on('joined', ({ room, data, socketId, socketIdFor }) => {
-            if (socketId !== socket.id && socketIdFor == user.id) {
-                alert('You joined with another device.');
-                window.location.href = "/home";
-                return;
-            }
             console.log('joined: ' + room + "(" + socket.id + ")");
             setPlayers(data);
             setRoom(room)
+        })
+
+        socket.on('start_game', () => {
+            console.log('starting: ' + room + "(" + socket.id + ")");
+            setGameStarted(true);
         })
     }, [queryString])
 
@@ -49,7 +50,22 @@ export default function Room() {
         console.log('players: ', players)
     }, [players])
 
-    return <>{useRequireAuth(<>
-        {room}
-    </>)}</>
+    return <>
+        {
+            useRequireAuth(
+                <>
+                    {
+                        gameStarted
+                            ? <Redirect to={`/board?room=${room}&players=${encodeURIComponent(JSON.stringify(players))}`} />
+                            : <>
+                                Room id: {room}
+                                {
+                                    players.map((player, key) => <li key={key}>Player: {player.player}</li>)
+                                }
+                            </>
+                    }
+                </>
+            )
+        }
+    </>
 }

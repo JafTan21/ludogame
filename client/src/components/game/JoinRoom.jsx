@@ -14,6 +14,18 @@ export default function JoinRoom() {
 
     const join = () => {
         if (!room) return;
+        socket.on('room_full', ({ socketId }) => {
+            if (socketId == socket.id) {
+                alert('Room is full');
+                return;
+            }
+        })
+        socket.on('game_started', ({ socketId }) => {
+            if (socketId == socket.id) {
+                alert('Game started');
+                return;
+            }
+        })
         setJoined(true);
         setRoom(room)
     }

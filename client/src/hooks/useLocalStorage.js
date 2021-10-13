@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
 
-const getSavedValue = (key, initial) => {
+const getSavedValue = (key, initial, forceSave) => {
+
+    if (forceSave) {
+        localStorage.removeItem(key)
+    }
+
     const savedValue = JSON.parse(localStorage.getItem(key));
     if (savedValue) return savedValue;
 
@@ -10,9 +15,9 @@ const getSavedValue = (key, initial) => {
 }
 
 
-export default function useLocalStorage(key, initial) {
+export default function useLocalStorage(key, initial, forceSave = false) {
 
-    const [state, setState] = useState(() => getSavedValue(key, initial))
+    const [state, setState] = useState(() => getSavedValue(key, initial, forceSave))
 
     useEffect(() => {
         localStorage.setItem(key, JSON.stringify(state))

@@ -16,6 +16,15 @@ class CreateRoomsTable extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('room_name');
+            $table->bigInteger('player_id_1')->nullable();
+            $table->bigInteger('player_1_rank')->default(4);
+            $table->bigInteger('player_id_2')->nullable();
+            $table->bigInteger('player_2_rank')->default(4);
+            $table->bigInteger('player_id_3')->nullable();
+            $table->bigInteger('player_3_rank')->default(4);
+            $table->bigInteger('player_id_4')->nullable();
+            $table->bigInteger('player_4_rank')->default(4);
+            $table->string('status')->default('2'); // 1-started, 2-pending, 0-closed
             $table->timestamps();
         });
     }

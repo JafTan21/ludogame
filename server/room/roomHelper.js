@@ -1,9 +1,20 @@
 const rooms = [];
+const axios = require('axios').default;
+const API_ENDPOINT = "http://localhost:8000/api";
 
+
+const get_color = ({ room }) => {
+    const userCount = get_users_of({ room }).length;
+
+    if (userCount == 0) return 'blue';
+    if (userCount == 1) return 'green';
+    if (userCount == 2) return 'red';
+    if (userCount == 3) return 'yellow';
+}
 
 const add_user_to = ({ user, room, socketId }) => {
     if (!rooms.find(room => room.player == user)) {
-        rooms.push({ name: room, player: user, socketId });
+        rooms.push({ name: room, player: user, socketId, color: get_color({ room }) });
     } else {
         rooms[rooms.findIndex(r => r.player == user)].socketId = socketId;
     }
@@ -18,7 +29,7 @@ const remove_user = (socketId) => {
     if (index > -1) {
         rooms.splice(index, 1);
     }
-    console.log(socketId + " removed")
+    console.log(socketId + " removed", rooms)
 }
 
 const user_exists_in = (room) => {
@@ -32,16 +43,39 @@ const room_exists = ({ room }) => {
 
 
 const get_users_of = ({ room }) => {
+    // const tempUsers = [];
     return rooms.filter(r => {
         return r.name == room;
     })
+    // .forEach(room => tempUsers.push(room.player))
+
+    // return tempUsers;
 }
 
+const room_of = ({ socketId }) => {
+    console.log(rooms.filter(room => room.socketId == socketId), socketId, rooms)
+    // return rooms.filter(room => room.socketId == socketId)[0].name;
+}
+
+const game_started = ({ room }) => {
+    axios.post(`${API_ENDPOINT}/get-game-status`, {
+        room_name: room
+    })
+        .then(response => {
+            if (response.game_status == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        })
+}
 
 module.exports = {
     add_user_to,
     remove_user,
     user_exists_in,
     get_users_of,
-    room_exists
+    room_exists,
+    room_of,
+    game_started
 }

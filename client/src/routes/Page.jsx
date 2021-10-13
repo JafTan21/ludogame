@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Switch, Route, Link } from 'react-router-dom'
 import Login from '../auth/Login'
 import Register from '../auth/Register'
+import Board from '../components/game/Board'
 import CreateRoom from '../components/game/CreateRoom'
 import JoinRoom from '../components/game/JoinRoom'
 import Room from '../components/game/Room'
@@ -39,6 +40,8 @@ export default function Page() {
                 <Route exact path="/create-room" component={CreateRoom} />
                 <Route exact path="/join-room" component={JoinRoom} />
                 <Route exact path="/room" component={Room} />
+
+                <Route exact path="/board" component={Board} />
 
 
 
