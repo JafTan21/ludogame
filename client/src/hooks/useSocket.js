@@ -16,6 +16,7 @@ export default function useSocket() {
     }, [])
 
     useEffect(() => {
+        console.log('socket connection: ', socket.id)
     }, [socket])
 
 
