@@ -12,7 +12,9 @@ const { add_user_to,
     get_users_of,
     room_exists,
     room_of,
-    game_started
+    game_started,
+    get_all_room,
+    room_exists_local
 } = require('./room/roomHelper');
 const axios = require('axios').default;
 const API_ENDPOINT = "http://localhost:8000/api";
@@ -34,7 +36,7 @@ io.on('connection', (socket) => {
     socket.on('join_room', ({ user, room, asCreator }) => {
 
 
-        if (!room_exists({ room }) && !asCreator) {
+        if (!room_exists_local({ room }) && !asCreator) {
             socket.emit('room_not_found', {
                 socketId: socket.id,
                 socketIdFor: user
@@ -65,18 +67,37 @@ io.on('connection', (socket) => {
 
         if (get_users_of({ room }).length == 4) {
             const users = get_users_of({ room });
-            console.log(get_users_of({ room }).length)
             axios.post(`${API_ENDPOINT}/create-room`, {
                 room_name: room,
                 player_1: users[0].player,
                 player_2: users[1].player,
                 player_3: users[2].player,
                 player_4: users[3].player,
+            }).then(res => {
+                io.to(room).emit('start_game');
             });
-            io.to(room).emit('start_game');
         }
     })
 
+    // checking room
+    // socket.on('check_room', ({ room, user }) => {
+    //     if (!room_exists_local({ room })) {
+    //         socket.emit('room_not_found', {
+    //             socketIdFor: user
+    //         });
+    //         return;
+    //     }
+    // });
+
+    // dice
+    socket.on('toss', ({ user, dice, room }) => {
+        console.log(user, dice)
+        io.to(room).emit('toss_for_other', { tosser: user, dice });
+    });
+
+    socket.on('show_rooms', () => {
+        //console.log(get_all_room())
+    })
 
 });
 

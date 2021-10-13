@@ -4,8 +4,9 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 import useQueryString from '../../hooks/useQueryString'
 import useRequireAuth from '../../hooks/useRequireAuth'
 import useSocket from '../../hooks/useSocket'
-import { useBeforeunload } from 'react-beforeunload';
 import { Redirect } from 'react-router'
+import { toast } from 'react-toastify';
+import Header from '../inc/Header'
 
 export default function Room() {
 
@@ -27,9 +28,9 @@ export default function Room() {
             asCreator: (queryString.as == 'admin')
 
         });
-        socket.on('room_not_found', ({ socketId, socketIdFor }) => {
+        socket.on('room_not_found', ({ socketIdFor }) => {
             if (socketIdFor == user.id) {
-                alert('Room not found.');
+                toast('Room not found.');
                 window.location.href = "/join-room";
                 return;
             }
@@ -58,10 +59,13 @@ export default function Room() {
                         gameStarted
                             ? <Redirect to={`/board?room=${room}&players=${encodeURIComponent(JSON.stringify(players))}`} />
                             : <>
-                                Room id: {room}
-                                {
-                                    players.map((player, key) => <li key={key}>Player: {player.player}</li>)
-                                }
+                                <div className="container">
+                                    <Header />
+                                    Room id: {room}
+                                    {
+                                        players.map((player, key) => <li key={key}>Player: {player.player}</li>)
+                                    }
+                                </div>
                             </>
                     }
                 </>

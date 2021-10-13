@@ -6,26 +6,22 @@ import Routes from './routes/Routes'
 import Page from './routes/Page'
 import './styles/home.css'
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function App() {
     const [loading, setLoading, loaded] = usePageLoader({
         main: <>
-            <div id="App">
-                <div className="container">
-                    <Router>
-                        <Routes />
-                        <Page />
-                    </Router>
-                </div>
-            </div>
+            <Router>
+                <Routes />
+                <Page />
+            </Router>
+
+            <ToastContainer />
         </>,
         initial: true
     })
     const [socket] = useSocket();
-
-
-
-
-
 
 
     return <>{loaded}</>;

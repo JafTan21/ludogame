@@ -38,6 +38,19 @@ const user_exists_in = (room) => {
 
 const room_exists = ({ room }) => {
     console.log(rooms.some(r => r.name == room))
+    axios.post(`${API_ENDPOINT}/get-game-status`, {
+        room_name: room
+    })
+        .then(response => {
+            if (response.game_status == 4 || response.game_status != 2) {
+                return false;
+            } else {
+                return true;
+            }
+        })
+}
+
+const room_exists_local = ({ room }) => {
     return rooms.some(r => r.name == room);
 }
 
@@ -70,6 +83,8 @@ const game_started = ({ room }) => {
         })
 }
 
+const get_all_room = () => rooms;
+
 module.exports = {
     add_user_to,
     remove_user,
@@ -77,5 +92,7 @@ module.exports = {
     get_users_of,
     room_exists,
     room_of,
-    game_started
+    game_started,
+    get_all_room,
+    room_exists_local
 }

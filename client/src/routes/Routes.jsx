@@ -17,8 +17,8 @@ export default function Routes() {
 
     const [loading, setLoading, loaded] = usePageLoader({
         main: <>
-            <ul>
-                {
+            {/* <ul> */}
+            {/* {
                     auth
                         ? <>
                             <li>
@@ -42,8 +42,8 @@ export default function Routes() {
                                 <Link to="/register">register</Link>
                             </li>
                         </>
-                }
-            </ul>
+                } */}
+            {/* </ul> */}
         </>,
         initial: true
     })

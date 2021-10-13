@@ -5,9 +5,9 @@ const getSocketEndpoint = () => socketEndpoint;
 const getApiEndpoint = () => apiEndpoint;
 
 
-const BOARD_SIZE = 380;
-const HOME_SIZE = 150;
-const HOME_BOX_SIZE = 100;
+const BOARD_SIZE = 350;
+const HOME_SIZE = 140;
+const HOME_BOX_SIZE = 80;
 const PLAYER_CIRCLE_RADIUS = HOME_BOX_SIZE / 8;
 const DISTANCE_OF_BORDER_AND_HOME = (HOME_SIZE - HOME_BOX_SIZE) / 2;
 const DISTANCE_OF_BORDER_AND_PLAYER = HOME_BOX_SIZE / 8;
