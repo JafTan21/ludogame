@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DepositController;
+use App\Http\Controllers\WithdrawController;
+use App\Models\Deposit;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,14 +16,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', [LoginController::class, 'login']);
+Route::redirect('/', 'dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::middleware('auth')->group(function () {
+    // Route::get('/deposits', [DepositController::class, 'index']);
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth'])->name('dashboard');
+    Route::resource('deposit', DepositController::class);
+    Route::resource('withdraw', WithdrawController::class);
+});
 
-// require __DIR__ . '/auth.php';
+
+
+require __DIR__ . '/auth.php';

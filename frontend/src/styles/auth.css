@@ -1,0 +1,21 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: rgb(98, 185, 167);
+}
+
+#App {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.app-logo {
+  height: 100px;
+  width: 100px;
+  margin: auto;
+}

@@ -7,97 +7,104 @@ const io = require("socket.io")(server, {
         methods: ["GET", "POST"]
     }
 });
-const { add_user_to,
-    remove_user,
-    get_users_of,
-    room_exists,
-    room_of,
-    game_started,
-    get_all_room,
-    room_exists_local
-} = require('./room/roomHelper');
+
 const axios = require('axios').default;
 const API_ENDPOINT = "http://localhost:8000/api";
 
+const {
+    crate_room,
+    check_user_in_room,
+    join_room_if_exists,
+    send_updated_players,
+    leave_room,
+    remove_user_from_room
+} = require('./room/roomHelper');
+
+let socket_user = [];
+
+const add_user = ({ user_id, socket_id }) => {
+    socket_user = socket_user.filter(user => {
+        return user.user_id != user_id;
+    });
+    socket_user.push({ user_id, socket_id });
+
+    console.log(socket_user)
+}
+
+const remove_user = ({ socket_id }) => {
+    socket_user = socket_user.filter(user => {
+        return user.socket_id != socket_id;
+    });
+
+    console.log(socket_user)
+}
 
 io.on('connection', (socket) => {
     console.log('a user connected ' + socket.id);
-    socket.on('disconnect', (e) => {
-        console.log(e, 'user left: ' + socket.id)
-        remove_user(socket.id);
+    socket.on('disconnect', () => {
+        remove_user({ socket_id: socket.id });
+    });
+    // connection
+    socket.on('CONNECTION_REQUEST', ({ user_id }) => {
+        add_user({ user_id, socket_id: socket.id });
+        socket.emit('CONNECTION_REQUEST_ACCEPTED');
     });
 
 
-    socket.on('create_room', ({ room }) => {
-        socket.join(room);
-        io.to(room).emit('send_created_room', { room });
-    })
 
-    socket.on('join_room', ({ user, room, asCreator }) => {
-
-
-        if (!room_exists_local({ room }) && !asCreator) {
-            socket.emit('room_not_found', {
-                socketId: socket.id,
-                socketIdFor: user
-            });
-            return;
-        }
-
-        if (game_started({ room })) {
-            socket.emit('game_started');
-            return;
-        }
-
-        if (get_users_of({ room }).length == 4) {
-            socket.emit('room_full', {
-                socketId: socket.id,
-            });
-            return;
-        }
-
-        socket.join(room);
-        add_user_to({ user, room, socketId: socket.id });
-        io.to(room).emit('joined', {
-            room,
-            data: get_users_of({ room }),
-            socketId: socket.id,
-            socketIdFor: user
+    // create room
+    socket.on('CREATE_ROOM', ({ room_name, entry_fee, user_id }) => {
+        crate_room({ room_name, entry_fee, user_id }, ({ status, msg }) => {
+            if (status == 1) { socket.emit('room_created'); return; }
+            if (status == 0) { socket.emit('room_error', { msg }); return }
         });
-
-        if (get_users_of({ room }).length == 4) {
-            const users = get_users_of({ room });
-            axios.post(`${API_ENDPOINT}/create-room`, {
-                room_name: room,
-                player_1: users[0].player,
-                player_2: users[1].player,
-                player_3: users[2].player,
-                player_4: users[3].player,
-            }).then(res => {
-                io.to(room).emit('start_game');
-            });
-        }
-    })
-
-    // checking room
-    // socket.on('check_room', ({ room, user }) => {
-    //     if (!room_exists_local({ room })) {
-    //         socket.emit('room_not_found', {
-    //             socketIdFor: user
-    //         });
-    //         return;
-    //     }
-    // });
-
-    // dice
-    socket.on('toss', ({ user, dice, room }) => {
-        console.log(user, dice)
-        io.to(room).emit('toss_for_other', { tosser: user, dice });
     });
 
-    socket.on('show_rooms', () => {
-        //console.log(get_all_room())
-    })
+
+
+    // join room
+    socket.on('JOIN_ROOM', ({ room_name, user_id }) => {
+        join_room_if_exists({ room_name, user_id }, ({ status, msg }) => {
+            if (status == 1) { socket.emit('room_joined'); return; }
+            if (status == 0) { socket.emit('room_error', { msg }); return }
+        });
+    });
+    // join from room page
+    socket.on('CHECK_AND_JOIN', ({ room_name, user_id }) => {
+        check_user_in_room({ room_name, user_id }, ({ status, msg }) => {
+            if (status == 0) { socket.emit('room_error', { msg }); return; }
+
+            socket.join(room_name);
+            socket.emit('checked_and_room_joined');
+
+            send_updated_players({ room_name }, ({ players }) => {
+                io.to(room_name).emit('update_players', { players });
+            });
+        });
+    });
+
+
+
+    // leave room
+    socket.on('LEAVE_ROOM', ({ room_name, user_id }) => {
+        leave_room({ room_name, user_id }, () => {
+            send_updated_players({ room_name }, ({ players }) => {
+                io.to(room_name).emit('update_players', { players });
+            });
+        });
+    });
+
+
+
+    // start game
+
+
+
+    // dice toss
+    socket.on('TOSS', ({ user_id, result, room }) => {
+        console.log(user_id, result)
+        io.to(room).emit('user_tossed', { user_id, result });
+    });
 
 });
 
