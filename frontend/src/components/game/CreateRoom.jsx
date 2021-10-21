@@ -4,6 +4,7 @@ import useRequireAuth from 'hooks/auth/useRequireAuth'
 import useSocket from 'hooks/useSocket';
 import { Redirect } from 'react-router';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { success } from 'helper/toastHelper';
 
 
 export default function CreateRoom() {
@@ -14,10 +15,6 @@ export default function CreateRoom() {
     const [created, setCreated] = useState(false);
     const [room, setRoom] = useState('');
     const [user] = useLocalStorage('user', '');
-
-    useEffect(() => {
-        console.log(socket)
-    }, [socket])
 
     const CREATE_ROOM = (e) => {
         e.preventDefault();
@@ -35,6 +32,7 @@ export default function CreateRoom() {
 
     const handle_room_created = () => {
         setCreated(true);
+        success('Room created successfully');
     }
 
     useEffect(() => {

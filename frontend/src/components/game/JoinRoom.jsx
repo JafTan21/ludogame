@@ -1,4 +1,5 @@
 import Header from 'components/inc/Header'
+import { success } from 'helper/toastHelper';
 import useRequireAuth from 'hooks/auth/useRequireAuth'
 import useLocalStorage from 'hooks/useLocalStorage';
 import useSocket from 'hooks/useSocket';
@@ -24,6 +25,8 @@ export default function JoinRoom() {
 
     const handle_room_joined = () => {
         setJoined(true);
+        success('Joined successfully');
+
     }
 
     const handle_room_error = ({ msg }) => {

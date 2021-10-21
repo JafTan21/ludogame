@@ -5,7 +5,7 @@ import Login from 'components/auth/Login'
 import Register from 'components/auth/Register'
 import CreateRoom from 'components/game/CreateRoom'
 import JoinRoom from 'components/game/JoinRoom'
-import Board from 'components/game/Board'
+import MainBoard from 'components/game/MainBoard'
 import Room from 'components/game/Room'
 
 const PageNotFound = () => {
@@ -44,7 +44,7 @@ export default function Page() {
             <Route exact path="/create-room" component={CreateRoom} />
             <Route exact path="/join-room" component={JoinRoom} />
             <Route exact path="/room" component={Room} />
-            <Route exact path="/board" component={Board} />
+            <Route exact path="/board" component={MainBoard} />
 
 
             <Route component={PageNotFound} />

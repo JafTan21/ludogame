@@ -76,6 +76,7 @@ export default function Room() {
             useRequireAuth(
                 started
                     ? <Redirect to={`/board?${playersString}room_name=${room}`} />
+                    // ? window.open(`/board?${playersString}room_name=${room}`)
                     : <div className="container">
                         <Header />
 

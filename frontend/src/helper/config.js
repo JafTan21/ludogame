@@ -1,4 +1,4 @@
-const socketEndpoint = "http://localhost:5000";
+const socketEndpoint = "http://localhost:5001";
 const apiEndpoint = "http://localhost:8000/api";
 
 const getSocketEndpoint = () => socketEndpoint;

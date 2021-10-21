@@ -1,7 +1,6 @@
 const axios = require("axios").default;
 const API_ENDPOINT = "http://localhost:8000/api";
 
-
 // create room
 const crate_room = async ({ room_name, entry_fee, user_id }, callback) => {
     axios.post(`${API_ENDPOINT}/create-room`, {

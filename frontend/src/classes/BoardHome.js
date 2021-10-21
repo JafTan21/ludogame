@@ -6,7 +6,7 @@ const {
 } = require("helper/config");
 
 
-class BoardHome {
+export default class BoardHome {
     constructor({ ctx, startingX, startingY, color }) {
         this.ctx = ctx;
         this.color = color;
@@ -82,5 +82,3 @@ class BoardHome {
         ctx.fill();
     }
 }
-
-module.exports = { BoardHome }

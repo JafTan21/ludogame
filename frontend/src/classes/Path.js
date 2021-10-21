@@ -1,4 +1,4 @@
-class Path {
+export default class Path {
     static getBluePath() {
         return [
             { x: 1, y: 6 },
@@ -296,6 +296,3 @@ class Path {
     }
 }
 
-
-
-module.exports = { Path }

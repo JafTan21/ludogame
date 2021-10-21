@@ -1,6 +1,6 @@
-import { BoardHome } from 'classes/BoardHome';
-import { Spot } from 'classes/Spot';
-import { Path } from 'classes/Path';
+import Spot from 'classes/Spot';
+import Path from 'classes/Path';
+import BoardHome from './BoardHome';
 const {
     COLORS,
     HOME_SIZE,
@@ -10,6 +10,13 @@ const {
 
 export default class Board {
 
+    static paths = {
+        red: Path.getRedPath(),
+        green: Path.getGreenPath(),
+        yellow: Path.getYellowPath(),
+        blue: Path.getBluePath(),
+    };
+
     constructor({ ctx }) {
         this.ctx = ctx;
         this.homes = [];
@@ -17,21 +24,23 @@ export default class Board {
         let width = BOARD_SIZE - (HOME_SIZE * 2);
         this.winningBoxWidth = Math.sqrt(width * width);
 
-
-        this.paths = {
-            red: Path.getRedPath(),
-            green: Path.getGreenPath(),
-            yellow: Path.getYellowPath(),
-            blue: Path.getBluePath(),
-        };
-
-        this.players = [];
+        this.players = {};
 
         this.drawnXY = {};
+
     }
 
-    getNthSpot({ color, n }) {
-        return this.paths[color][n - 1];
+    static getNthSpot({ color, n, currX, currY }) {
+
+        if (n - 1 == -1) {
+            return { x: 0, y: 0 }
+        }
+
+        if (!Board.paths[color][n - 1]) {
+            return { x: currX, y: currY };
+        }
+
+        return Board.paths[color][n - 1];
     }
 
     init() {
@@ -43,7 +52,7 @@ export default class Board {
 
         this.drawnXY = {};
 
-        for (const [key, value] of Object.entries(this.paths)) {
+        for (const [key, value] of Object.entries(Board.paths)) {
             for (let i = 0; i < value.length; i++) {
                 let spot = value[i];
                 if (this.drawnXY[spot.x + '' + spot.y]) {
@@ -69,6 +78,11 @@ export default class Board {
 
         // winning box ctx.lineWidth = 2;
         this.drawWinningBox();
+
+        // players
+        for (const [key, player] of Object.entries(this.players)) {
+            player.draw();
+        }
     }
 
     drawWinningBox() {
@@ -145,7 +159,11 @@ export default class Board {
     }
 
     addPlayer(player) {
-        this.players.push(player);
+        this.players[player.color] = player;
+    }
+
+    playerAt(x, y) {
+
     }
 
     clearAndDraw() {
@@ -157,5 +175,15 @@ export default class Board {
 
 
         console.log("After: ", this);
+    }
+
+    draw() {
+        this.init();
+    }
+
+    updatePlayerPositions({ positions }) {
+        for (const [color, value] of Object.entries(positions)) {
+            this.players[color].updateCurrentPosition({ position: value });
+        }
     }
 }

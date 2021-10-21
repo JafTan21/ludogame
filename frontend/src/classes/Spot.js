@@ -1,6 +1,6 @@
 const { COLORS } = require("helper/config");
 
-class Spot {
+export default class Spot {
     static total = 0;
     constructor({ ctx, x, y, height, width }) {
         this.ctx = ctx;
@@ -71,5 +71,3 @@ class Spot {
     }
 
 }
-
-module.exports = { Spot }

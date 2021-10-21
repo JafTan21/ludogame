@@ -1,8 +1,8 @@
 const { PLAYER_CIRCLE_RADIUS, SOLDIER_SIZE } = require("helper/config");
 
-class Soldier {
+export default class Soldier {
 
-    constructor({ ctx, x, y, color }) {
+    constructor({ ctx, x, y, color, is_active }) {
         this.ctx = ctx;
         this.x = x;
         this.y = y;
@@ -11,7 +11,7 @@ class Soldier {
         this.img = `/players/${color}.png`;
 
         this.draw();
-
+        this.is_active = is_active;
     }
 
     draw() {
@@ -25,5 +25,3 @@ class Soldier {
         img.src = this.img;
     }
 }
-
-module.exports = { Soldier }
